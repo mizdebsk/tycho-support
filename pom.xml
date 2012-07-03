@@ -87,6 +87,20 @@
           <artifactId>maven-resources-plugin</artifactId>
           <version>2.4.3</version>
         </plugin>
+        <!--
+         |
+         | We only care about deploying the update site. Disable the deployment of the standard
+         | Maven resources and only deploy the update site in the feature build which is defined
+         | in the feature-build profile below.
+         |
+         -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <configuration>
+            <skip>true</skip>
+          </configuration>
+        </plugin>                  
       </plugins>
     </pluginManagement>    
   </build>
@@ -182,6 +196,49 @@
               <artifactRepositoryName>${p2MetadataName}</artifactRepositoryName>
             </configuration>
           </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/assembly.xml</descriptor>
+              </descriptors>
+            </configuration>
+            <executions>
+              <execution>
+                <id>make-assembly</id> 
+                <phase>package</phase> 
+                <goals>
+                  <goal>single</goal> 
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!--
+           |
+           | Only deploy the update site zip to the server using the maven-upload-plugin.
+           |
+           -->
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>maven-upload-plugin</artifactId>
+            <version>0.0.1</version>
+            <executions>
+              <execution>
+                <id>publish-site</id>
+                <phase>deploy</phase>
+                <goals>
+                  <goal>upload-file</goal>
+                </goals>
+                <configuration>
+                  <file>${project.build.directory}/${project.artifactId}-${project.version}-site.zip</file>
+                  <serverId>${serverIdInSettingsXml}</serverId>
+                  <repositoryUrl>${repositoryUrl}</repositoryUrl>
+                  <repositoryPath>${repositoryPath}</repositoryPath>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>                    
         </plugins>
       </build>          
     </profile>    
