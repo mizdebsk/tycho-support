@@ -19,7 +19,7 @@
 
   <groupId>io.tesla.tycho</groupId>
   <artifactId>tycho-support</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.2</version>
   <name>Tycho Base</name>
   <packaging>pom</packaging>
   <description>
