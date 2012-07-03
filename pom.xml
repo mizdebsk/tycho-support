@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ ~ Copyright (c) 2012 Jason van Zyl
+ ~ All rights reserved. This program and the accompanying materials
+ ~ are made available under the terms of the Eclipse Public License v1.0
+ ~ which accompanies this distribution, and is available at
+ ~   http://www.eclipse.org/legal/epl-v10.html
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.tesla</groupId>
+    <artifactId>tesla</artifactId>
+    <version>4</version>
+  </parent>
+
+  <groupId>io.tesla.tycho</groupId>
+  <artifactId>tycho-base</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>Tycho Base</name>
+  <packaging>pom</packaging>
+  <description>
+    This POM serves as the base of an Eclipse project which has plugins, tests, and deployable features. Everything
+    that is required is provided and parameterized by specifying properties in the host POM.
+  </description>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  
+    <!--
+     |
+     | These are the values that can be parameterized to control deploy and release behaviour. By default
+     | we are setup to deploy on the Tesla.io infrastructure.
+     |
+     -->
+    <tychoVersion>0.15.0</tychoVersion>
+    <serverIdInSettingsXml>m2e.extras</serverIdInSettingsXml>
+    <repositoryUrl>http://repository.tesla.io:8081/nexus/service/local/repositories/m2e.extras/content-compressed/</repositoryUrl>
+    <repositoryPath>${repositoryPathId}/${unqualifiedVersion}/N/${unqualifiedVersion}.${buildQualifier}</repositoryPath>
+  </properties>
+  
+  <repositories>
+    <repository>
+      <id>juno</id>
+      <url>http://download.eclipse.org/releases/juno</url>
+      <layout>p2</layout>
+    </repository>
+    <repository>
+      <id>orbit</id>
+      <url>http://download.eclipse.org/tools/orbit/downloads/drops/R20120526062928/repository/</url>
+      <layout>p2</layout>
+    </repository>
+  </repositories>    
+  
+  <build>
+    <plugins>
+      <!-- These plugins are required for all Tycho-based builds -->
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>${tychoVersion}</version>
+        <extensions>true</extensions>
+      </plugin>    
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <version>${tychoVersion}</version>
+        <configuration>
+          <resolver>p2</resolver>
+          <ignoreTychoRepositories>true</ignoreTychoRepositories>
+        </configuration>
+      </plugin>     
+    </plugins>
+    <pluginManagement>
+      <plugins>
+        <!-- Important for M2E self-hosting -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.4.3</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>    
+  </build>
+
+  <profiles>  
+    <profile>
+      <id>sun-jvm</id>
+      <activation>
+        <property>
+          <name>java.vendor.url</name>
+          <value>http://java.sun.com/</value>
+        </property>
+      </activation>
+      <properties>
+        <tycho.test.jvmArgs>-Xmx512m -XX:MaxPermSize=256m</tycho.test.jvmArgs>
+      </properties>
+    </profile>
+    <profile>
+      <id>osx</id>
+      <activation>
+        <property>
+          <name>java.vendor.url</name>
+          <value>http://www.apple.com/</value>
+        </property>
+      </activation>
+      <properties>
+        <tycho.test.jvmArgs>-Xmx512m -XX:MaxPermSize=256m -Dosgi.ws=cocoa -XstartOnFirstThread</tycho.test.jvmArgs>
+        <osgi.ws>cocoa</osgi.ws>
+      </properties>
+    </profile>
+    <profile>
+      <id>sign</id>
+      <activation>
+        <property><name>jarsigner.alias</name></property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jarsigner-plugin</artifactId>
+            <version>1.2</version>
+            <executions>
+              <execution>
+                <id>sign</id>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    
+    <!--
+     |
+     | Feature build profile will only be activated in the presence of a feature.xml file in
+     | the base directory of the project.
+     |
+     -->     
+    <profile>
+      <id>feature-build</id>
+      <activation>
+        <file>
+          <exists>feature.xml</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.eclipse.tycho</groupId>
+            <artifactId>tycho-packaging-plugin</artifactId>
+            <version>${tychoVersion}</version>
+            <configuration>
+              <deployableFeature>true</deployableFeature>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.eclipse.tycho</groupId>
+            <artifactId>tycho-p2-plugin</artifactId>
+            <version>${tychoVersion}</version>
+            <executions>
+              <execution>
+                <id>categorization</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>category-p2-metadata</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <metadataRepositoryName>${p2MetadataName}</metadataRepositoryName>
+              <artifactRepositoryName>${p2MetadataName}</artifactRepositoryName>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>          
+    </profile>    
+  </profiles>
+</project>
