@@ -86,26 +86,40 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>2.4.3</version>
-        </plugin>
-        <!--
-         |
-         | We only care about deploying the update site. Disable the deployment of the standard
-         | Maven resources and only deploy the update site in the feature build which is defined
-         | in the feature-build profile below.
-         |
-         -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <configuration>
-            <skip>true</skip>
-          </configuration>
-        </plugin>                  
+        </plugin>   
       </plugins>
     </pluginManagement>    
   </build>
 
-  <profiles>  
+  <profiles>
+    <profile>
+      <id>deploy</id>
+      <activation>
+        <file>
+          <missing>.tycho-support</missing>
+        </file>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <!--
+             |
+             | We only care about deploying the update site. Disable the deployment of the standard
+             | Maven resources and only deploy the update site in the feature build which is defined
+             | in the feature-build profile below.
+             |
+             -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-deploy-plugin</artifactId>
+              <configuration>
+                <skip>true</skip>
+              </configuration>
+            </plugin>
+          </plugins>                    
+        </pluginManagement>
+      </build>
+    </profile>
     <profile>
       <id>sun-jvm</id>
       <activation>
