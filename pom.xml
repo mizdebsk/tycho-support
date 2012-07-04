@@ -86,8 +86,27 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>2.4.3</version>
-        </plugin>   
-      </plugins>
+        </plugin>
+        <!-- Testing -->
+        <plugin>
+          <groupId>org.eclipse.tycho</groupId>
+          <artifactId>tycho-surefire-plugin</artifactId>
+          <version>${tychoVersion}</version>
+          <configuration>
+            <useUIHarness>true</useUIHarness>
+            <includes>
+              <include>**/*Test.java</include>
+            </includes>
+            <!--
+            We need to share these test resources across projects easily
+            <argLine>${tycho.test.jvmArgs} -Djava.io.tmpdir=${project.build.directory}/work</argLine>
+            <appArgLine>-eclipse.keyring target/keyring -eclipse.password resources/secure-storage-password.txt -pluginCustomization ${basedir}/plugin_customization.ini</appArgLine>
+            -->            
+            <argLine>${tycho.test.jvmArgs}</argLine>
+            <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+          </configuration>
+        </plugin>        
+      </plugins>            
     </pluginManagement>    
   </build>
 
@@ -211,19 +230,19 @@
             </configuration>
           </plugin>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
+            <groupId>io.tesla.tycho</groupId>
+            <artifactId>feature-zip-plugin</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
             <configuration>
-              <descriptors>
-                <descriptor>src/main/assembly/assembly.xml</descriptor>
-              </descriptors>
+              <sourceDirectory>${project.build.directory}/site</sourceDirectory>
+              <zip>${project.build.directory}/${project.artifactId}-${project.version}-site.zip</zip>
             </configuration>
             <executions>
               <execution>
-                <id>make-assembly</id> 
+                <id>feature-zip</id> 
                 <phase>package</phase> 
                 <goals>
-                  <goal>single</goal> 
+                  <goal>zip</goal> 
                 </goals>
               </execution>
             </executions>
