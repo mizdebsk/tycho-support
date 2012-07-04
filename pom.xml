@@ -232,7 +232,7 @@
           <plugin>
             <groupId>io.tesla.tycho</groupId>
             <artifactId>feature-zip-plugin</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
             <configuration>
               <sourceDirectory>${project.build.directory}/site</sourceDirectory>
               <zip>${project.build.directory}/${project.artifactId}-${project.version}-site.zip</zip>
