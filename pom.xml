@@ -35,27 +35,22 @@
      | we are setup to deploy on the Tesla.io infrastructure.
      |
      -->
-    <tychoVersion>0.15.0</tychoVersion>
+    <tychoVersion>0.16.0</tychoVersion>
     <serverIdInSettingsXml>m2e.extras</serverIdInSettingsXml>
     <repositoryUrl>http://repository.tesla.io:8081/nexus/service/local/repositories/m2e.extras/content-compressed/</repositoryUrl>
     <repositoryPath>${repositoryPathId}/${unqualifiedVersion}/N/${unqualifiedVersion}.${buildQualifier}</repositoryPath>
   </properties>
   
   <scm>
-    <connection>scm:git:git@github.com/etesla/tycho-support.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/etesla/tycho-support.git</developerConnection>
-    <url>http://github.com/etesla/tycho-support</url>
+    <connection>scm:git:git@github.com/tesla/tycho-support.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/tesla/tycho-support.git</developerConnection>
+    <url>http://github.com/tesla/tycho-support</url>
   </scm>  
   
   <repositories>
     <repository>
-      <id>juno</id>
-      <url>http://download.eclipse.org/releases/juno</url>
-      <layout>p2</layout>
-    </repository>
-    <repository>
-      <id>orbit</id>
-      <url>http://download.eclipse.org/tools/orbit/downloads/drops/R20120526062928/repository/</url>
+      <id>kepler</id>
+      <url>http://download.eclipse.org/releases/kepler</url>
       <layout>p2</layout>
     </repository>
   </repositories>    
