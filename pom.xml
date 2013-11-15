@@ -14,7 +14,7 @@
   <parent>
     <groupId>io.tesla</groupId>
     <artifactId>tesla</artifactId>
-    <version>4</version>
+    <version>7</version>
   </parent>
 
   <groupId>io.tesla.tycho</groupId>
@@ -35,7 +35,7 @@
      | we are setup to deploy on the Tesla.io infrastructure.
      |
      -->
-    <tychoVersion>0.16.0</tychoVersion>
+    <tychoVersion>0.19.0</tychoVersion>
     <serverIdInSettingsXml>m2e.extras</serverIdInSettingsXml>
     <repositoryUrl>http://repository.tesla.io:8081/nexus/service/local/repositories/m2e.extras/content-compressed/</repositoryUrl>
     <repositoryPath>${repositoryPathId}/${unqualifiedVersion}/N/${unqualifiedVersion}.${buildQualifier}</repositoryPath>
@@ -46,8 +46,18 @@
     <developerConnection>scm:git:ssh://git@github.com/tesla/tycho-support.git</developerConnection>
     <url>http://github.com/tesla/tycho-support</url>
   </scm>  
-  
+      
   <repositories>
+    <!-- 
+      The org.eclipse.m2e.tests.common bundle is deployed to the m2e releases repository but is not 
+      part of the simultaneous release. The connectors use this bundle for testing so we need to
+      be able to pick it up.
+    -->
+    <repository>
+      <id>m2e-tests</id>
+      <url>http://download.eclipse.org/technology/m2e/releases</url>
+      <layout>p2</layout>
+    </repository>
     <repository>
       <id>kepler</id>
       <url>http://download.eclipse.org/releases/kepler</url>
